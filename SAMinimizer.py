@@ -71,7 +71,7 @@ class SAMinimizer:
                 Xn_transition_parameters = self.transition(self.state)
                 delta_c = self.delta_cost(self.state, *Xn_transition_parameters)
                 if delta_c < 0:
-                    new_state = self.state_constructor(self.state, Xn_transition_parameters)
+                    new_state = self.state_constructor(self.state, *Xn_transition_parameters)
                     new_cost = self.cost_timeseries[-1] + delta_c
                     
                     if new_cost < self.min_cost:
@@ -84,7 +84,7 @@ class SAMinimizer:
                     boltzmann_d = np.exp(-delta_c/T)
                     u = np.random.uniform(low = 0, high = 1)
                     if boltzmann_d > u:
-                        new_state = self.state_constructor(self.state, Xn_transition_parameters)
+                        new_state = self.state_constructor(self.state, *Xn_transition_parameters)
                         new_cost = self.cost_timeseries[-1] + delta_c
                         self.state = new_state
                         self.cost_timeseries.append(new_cost)

@@ -33,7 +33,7 @@ class TSPDeltaCost:
         assert adj_matrix.shape[0] == adj_matrix.shape[1]
         self.D = adj_matrix
 
-    def __call__(route, i, k):
+    def __call__(self, route, i, k):
         delta_c = 0.0
         delta_c -= self.D[route[i-1]][route[i]]
         delta_c -= self.D[route[k]][route[k+1]]
@@ -45,9 +45,8 @@ class TSPDeltaCost:
 def random_two_opt_transition(state):
     n = len(state)
     assert n > 4, "What is this pussy-ass TSP?"
-    lim = (1,n-1)
-    i = np.random.randint(*lim)
-    j = np.random.randint(*lim)
+    i = np.random.randint(1,n-1)
+    j = np.random.randint(1,n-1)
     while (j == i):
-        j = np.random.randint(*lim)
+        j = np.random.randint(1,n-1)
     return i,j
