@@ -71,8 +71,17 @@ def save_adj_matrix(filename):
 
 def load_adj_matrix(filename):
     npz_filename = data_path(filename)
-    save_data = np.load(filename)
+    save_data = np.load(npz_filename)
     return save_data['arr_0']
+
+def load_all_adj_matrices():
+    filenames = listdir(DATADIR)
+    adj_ext_rev = "adj.npz"[::-1]
+    matrices = []
+    for fname in filenames:
+        if fname[-1:-8:-1] == adj_ext_rev:
+            matrices.append(load_adj_matrix(fname))
+    return matrices
 
 
 if __name__ == '__main__':
