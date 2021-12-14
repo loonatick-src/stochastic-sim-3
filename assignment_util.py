@@ -135,7 +135,7 @@ def read_tour(filename):
     with open(filepath, "r") as f:
         lines = f.readlines()
         optimal_solution = np.float64(lines[2].strip().split()[-1][1:-1])
-        relevant_lines = lines[5:-2]
+        relevant_lines = lines[5:-1]
         typed_data = np.array(list(map(np.int32, relevant_lines)), dtype = np.int32)
         typed_data -= 1
         typed_data
