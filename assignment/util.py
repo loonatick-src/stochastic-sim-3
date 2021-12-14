@@ -2,7 +2,7 @@ import numpy as np
 from os.path import exists
 from os import mkdir
 from os import listdir
-from TSP import cost_function_factory
+from assignment.TSP import cost_function_factory
 
 SAVEDIR = "save_data"
 PLOTDIR = "plots"
