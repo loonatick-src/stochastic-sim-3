@@ -58,7 +58,7 @@ class SAMinimizer:
         X0: Any
             initial state
         """
-        assert chain_length > 0, "Length of Markov chain must be postive"
+        assert chain_length > 0, "Length of Markov chain must be a postive integer"
         assert T_final > 0, "Temperature must be postive"
         assert T_final < T_initial, "Final temperature must be lower than initial temperature"
         T = T_initial
@@ -88,6 +88,8 @@ class SAMinimizer:
                         new_cost = self.cost_timeseries[-1] + delta_c
                         self.state = new_state
                         self.cost_timeseries.append(new_cost)
+                    else:
+                        self.cost_timeseries.append(self.cost_timeseries[-1])
             T_colder = self.cooling(T)
             assert T_colder < T, "Cooling schedule is actually heating schedule"
             T = T_colder

@@ -65,6 +65,7 @@ def random_two_opt_transition(state):
     j = np.random.randint(1,n-1)
     while (j == i):
         j = np.random.randint(1,n-1)
+    i, j = min(i,j), max(i,j)
     return i,j
 
 class TestCost(unittest.TestCase):
