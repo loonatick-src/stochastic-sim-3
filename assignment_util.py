@@ -2,6 +2,7 @@ import numpy as np
 from os.path import exists
 from os import mkdir
 from os import listdir
+from TSP import cost_function_factory
 
 SAVEDIR = "save_data"
 PLOTDIR = "plots"
@@ -9,6 +10,11 @@ DATADIR = "TSP-Configurations"
 
 DIRS = [SAVEDIR, PLOTDIR, DATADIR]
 
+def parse_str_to_int(s):
+    numeric_chars = filter(lambda s: s.isnumeric(), s)
+    num_str_repr = ''.join(numeric_chars)
+    num = int(num_str_repr)
+    return num
 
 def savepath(filename):
     return SAVEDIR + f"/{filename}"
@@ -23,6 +29,10 @@ for d in DIRS:
     if not exists(d):
         mkdir(d)
 
+TSP_FILES = listdir(DATADIR)
+# LOL
+OPT_TOUR_FILES = sorted(filter(lambda path: "opt.tour" in path, TSP_FILES), key = parse_str_to_int)
+ADJ_FILES = list(filter(lambda path: ".adj" in path, TSP_FILES))
 
 def import_tsp_file(tsp_txt):
     
@@ -31,12 +41,11 @@ def import_tsp_file(tsp_txt):
     
     cities=[]
     
-    with open(filepath) as f:
+    with open(filepath, "r") as f:
         contents = f.read()
         file_as_list = contents.splitlines()[6:]
 
         for i, line in enumerate(file_as_list):
-            print(line)
             if line.strip() == "EOF":
                 break
                 
@@ -48,17 +57,53 @@ def import_tsp_file(tsp_txt):
 
     return cities
 
+def first(x):
+    return x[0]
+
+def second(x):
+    return x[1]
+
+def take2(x):
+    return first(x) , second(x)
+
+def take2_arr(x):
+    return np.array(take2(x))
+
+def sq(x):
+    return np.power(x,2)
+
+def l2normsq(x):
+    return np.sum(sq(x))
+
+def l2norm(x):
+    return np.sqrt(l2normsq(x))
 
 def distance(x1, x2):
-    return np.sqrt(np.sum((x1 - x2)**2))
+    displacement = x1 - x2
+    dist = l2norm(displacement)
+    return dist
 
+def symmetric_p(matrix):
+    n = len(matrix)
+    for i in range(n):
+        for j in range(i+1, n):
+            if a[i][j] != a[j][i]:
+                return False
+    return True
 
 def adj_matrix(cities):
     n = len(cities)
     a_mat = np.empty((n,n))
     for i in range(n):
-        for j in range(n):
-            a_mat[i][j] = distance(np.array([cities[i][1], cities[i][2]]), np.array([cities[j][1], cities[j][2]]))
+        a_mat[i][i] = 0.0
+
+    for i in range(n):
+        for j in range(i+1,n):
+            xy1 = take2_arr(cities[i][1:])
+            xy2 = take2_arr(cities[j][1:])
+            weight = distance(xy1, xy2)
+            a_mat[i][j] = a_mat[j][i] = weight
+
     return a_mat
 
 
@@ -82,6 +127,25 @@ def load_all_adj_matrices():
         if fname[-1:-8:-1] == adj_ext_rev:
             matrices.append(load_adj_matrix(fname))
     return matrices
+
+
+
+def read_tour(filename):
+    filepath = data_path(filename)
+    with open(filepath, "r") as f:
+        lines = f.readlines()
+        optimal_solution = np.float64(lines[2].strip().split()[-1][1:-1])
+        relevant_lines = lines[5:-2]
+        typed_data = np.array(list(map(np.int32, relevant_lines)), dtype = np.int32)
+        typed_data -= 1
+        typed_data
+        return optimal_solution, typed_data
+
+
+ADJ_MATRICES = load_all_adj_matrices()
+COST_FUNCTION_PAIRS = [cost_function_factory(matrix) for matrix in ADJ_MATRICES]
+COST_FUNCTIONS = list(map(first, COST_FUNCTION_PAIRS))
+DELTA_COST_FUNCTIONS = list(map(second, COST_FUNCTION_PAIRS))
 
 
 if __name__ == '__main__':
