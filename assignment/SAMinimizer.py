@@ -77,9 +77,10 @@ class SAMinimizer:
                     if new_cost < self.min_cost:
                         self.min_cost = new_cost
                         self.min_cost_state = new_state
+                        self.cost_timeseries.append(self.min_cost)
 
                     self.state = new_state
-                    self.cost_timeseries.append(new_cost)
+#                    self.cost_timeseries.append(new_cost)
                 else:
                     boltzmann_d = np.exp(-delta_c/T)
                     u = np.random.uniform(low = 0, high = 1)
@@ -87,9 +88,9 @@ class SAMinimizer:
                         new_state = self.state_constructor(self.state, *Xn_transition_parameters)
                         new_cost = self.cost_timeseries[-1] + delta_c
                         self.state = new_state
-                        self.cost_timeseries.append(new_cost)
+#                        self.cost_timeseries.append(new_cost)
                     else:
-                        self.cost_timeseries.append(self.cost_timeseries[-1])
+#                        self.cost_timeseries.append(self.cost_timeseries[-1])
             T_colder = self.cooling(T)
             assert T_colder < T, "Cooling schedule is actually heating schedule"
             T = T_colder
