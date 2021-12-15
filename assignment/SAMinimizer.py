@@ -63,34 +63,40 @@ class SAMinimizer:
         assert T_final < T_initial, "Final temperature must be lower than initial temperature"
         T = T_initial
         self.state = X0
-        self.cost_timeseries.append(cost_function(self.state))
+        current_cost = cost_function(self.state)
+        self.cost_timeseries.append(current_cost)
         self.min_cost = self.cost_timeseries[0]
         self.min_cost_state = X0
+        k = 1
         while (T > T_final):
+            # Start Markov chain for temperature T
             for i in range(chain_length):
                 Xn_transition_parameters = self.transition(self.state)
+                # calculate change in cost
                 delta_c = self.delta_cost(self.state, *Xn_transition_parameters)
-                if delta_c < 0:
+                if delta_c < 0:  # new state is lower cost
+                    # construct new state
                     new_state = self.state_constructor(self.state, *Xn_transition_parameters)
-                    new_cost = self.cost_timeseries[-1] + delta_c
+                    # calculate cost of next state
+                    new_cost = current_cost + delta_c
                     
                     if new_cost < self.min_cost:
                         self.min_cost = new_cost
                         self.min_cost_state = new_state
                         self.cost_timeseries.append(self.min_cost)
 
+                    # update state and cost
                     self.state = new_state
-#                    self.cost_timeseries.append(new_cost)
+                    current_cost = new_cost
                 else:
                     boltzmann_d = np.exp(-delta_c/T)
                     u = np.random.uniform(low = 0, high = 1)
                     if boltzmann_d > u:
                         new_state = self.state_constructor(self.state, *Xn_transition_parameters)
-                        new_cost = self.cost_timeseries[-1] + delta_c
+                        current_cost += delta_c
                         self.state = new_state
-#                        self.cost_timeseries.append(new_cost)
-                    else:
-#                        self.cost_timeseries.append(self.cost_timeseries[-1])
-            T_colder = self.cooling(T)
+                    # else do nothing
+            T_colder = self.cooling(T_initial, k)
             assert T_colder < T, "Cooling schedule is actually heating schedule"
+            k += 1
             T = T_colder
