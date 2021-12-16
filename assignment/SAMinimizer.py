@@ -1,4 +1,10 @@
 import numpy as np
+import enum
+
+class StoppingCriterion(enum.Enum):
+    MIN_TEMPERATURE = 0
+    MKOV_CHAIN_COUNT = 1
+
 
 class SAMinimizer:
     def __init__(self, transition, delta_cost, cooling, state_constructor = None):
@@ -43,7 +49,7 @@ class SAMinimizer:
         self.min_cost_state = None
 
 
-    def run(self, chain_length, T_initial, T_final, X0, cost_function):
+    def run(self, chain_length, T_initial, X0, cost_function, stopping_criterion, *args):
         """
         chain_length: int
             length of the Markov chain per temperature-value
@@ -59,8 +65,17 @@ class SAMinimizer:
             initial state
         """
         assert chain_length > 0, "Length of Markov chain must be a postive integer"
+        
+        T_final = None
+        if stopping_criterion == StoppingCriterion.MIN_TEMPERATURE:
+            T_final = args[0]
+        elif stopping_criterion == StoppingCriterion.MKOV_CHAIN_COUNT:
+            chain_count = args[0]
+            T_final = self.cooling(T_initial, chain_count)
+
         assert T_final > 0, "Temperature must be postive"
         assert T_final < T_initial, "Final temperature must be lower than initial temperature"
+
         T = T_initial
         self.state = X0
         current_cost = cost_function(self.state)
