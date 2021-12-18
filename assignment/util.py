@@ -25,6 +25,12 @@ def plot_savepath(filename):
 def data_path(filename):
     return DATADIR + f"/{filename}"
 
+def generate_rngs(count, seed = 0xc0ffee):
+    ss = np.random.SeedSequence(seed)
+    child_seeds = ss.spawn(count)
+    streams = [np.random.default_rng(s) for s in child_seeds]
+    return streams
+
 for d in DIRS:
     if not exists(d):
         mkdir(d)

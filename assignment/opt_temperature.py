@@ -23,6 +23,7 @@ class TemperatureOptimizer:
         costs = np.array([self.cost(state) for state in states_list])
         return states_list, costs
 
+
     def generate_positive_transitions(self, states_list, costs):
         Emaxs = np.empty(len(costs))
         for l,state in enumerate(states_list):
@@ -35,6 +36,7 @@ class TemperatureOptimizer:
                     Emaxs[l] = new_cost
                     break
         return costs, Emaxs
+
 
     def iterate_temperatures(self, T0, Emins, Emaxs, target_acceptance_rate, eps = 0.1, max_iter = 10**5, p = 1):
         # TODO: verify
@@ -49,6 +51,7 @@ class TemperatureOptimizer:
             self.T_iter_values.append(T) 
             chi_n = self.__class__.chi(T, Emins, Emaxs)
 
+
     def iterate_from_scratch(self, S, T0, target_acceptance_rate, eps = 0.1, max_iter = 10**5):
         states_list, Emins = self.generate_states(S)
         Emins, Emaxs = self.generate_positive_transitions(states_list, Emins)
@@ -61,6 +64,15 @@ class TemperatureOptimizer:
         numerator = np.sum(np.exp(-Emaxs/T))
         denominator = np.sum(np.exp(-Emins/T))
         return numerator/denominator
+
+
+def search_target_temperature(chi0, sa_system, T0 = 1000, chain_length = 1000):
+    raise NotImplementedError
+    X0 = SAMinimizer.generate_random_state()
+
+
+
+
 
 
 
