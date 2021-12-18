@@ -16,7 +16,7 @@ def parse_str_to_int(s):
     num = int(num_str_repr)
     return num
 
-def savepath(filename):
+def save_path(filename):
     return SAVEDIR + f"/{filename}"
 
 def plot_savepath(filename):
