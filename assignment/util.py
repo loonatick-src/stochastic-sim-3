@@ -149,7 +149,7 @@ def read_tour(filename):
 
 
 ADJ_MATRICES = load_all_adj_matrices()
-COST_FUNCTION_PAIRS = [cost_function_factory(matrix) for matrix in ADJ_MATRICES]
+COST_FUNCTION_PAIRS = sorted([cost_function_factory(matrix) for matrix in ADJ_MATRICES], key = lambda p: first(p).D.shape)
 COST_FUNCTIONS = list(map(first, COST_FUNCTION_PAIRS))
 DELTA_COST_FUNCTIONS = list(map(second, COST_FUNCTION_PAIRS))
 
