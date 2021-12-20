@@ -137,7 +137,7 @@ class SAMinimizer:
                         current_cost += delta_c
                         self.state = new_state
                         if cost_probing == CostProbing.ACCEPTED or cost_probing == CostProbing.ALL:
-                            self.cost_timeseries.append(new_cost)
+                            self.cost_timeseries.append(current_cost)
                     elif cost_probing == CostProbing.ALL:
                         self.cost_timeseries.append(current_cost)
             T_colder = self.cooling(T_initial, k)
