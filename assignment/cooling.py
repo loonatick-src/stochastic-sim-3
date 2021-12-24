@@ -48,10 +48,10 @@ class LinearCoolingSchedule(CoolingSchedule):
 class LogarithmicCoolingSchedule(CoolingSchedule):
     """
     T_k = T_0/(1 + alpha * log(1+k))
-        = T_{k-1} * (1 + log(k))/(1 + log(k+1))
+        = T_{k-1} * (1 + alpha*log(k))/(1+alpha*log(1 + k))
     """
     def __init__(self, alpha):
-        assert 0 < alpha < 1
+        assert alpha > 0
         self.args = (None,)
         self.f = lambda T, _, k: T/(1 + alpha * np.log(1+k))
 
@@ -62,7 +62,6 @@ class ExponentialCoolingSchedule(CoolingSchedule):
         = T_{k-1} * exp(-beta)
     """
     def __init__(self, beta):
-        assert 0 < beta < 1
         self.args = (None,)
         self.f = lambda T, _, k: T * np.exp(-beta * k)
 

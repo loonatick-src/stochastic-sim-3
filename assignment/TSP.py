@@ -26,7 +26,6 @@ class TSPCost:
         """Computes cost of route"""
         cost = 0.0
         n = len(self.D)
-        logging.debug(f"len(self.D) = {n}")
         for i in range(n):
             cost += self.D[route[i]][route[(i+1)%n]]
         return cost
